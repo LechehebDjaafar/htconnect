@@ -12,23 +12,28 @@ class UserTypeScreen extends StatelessWidget {
         title: const Text('اختر نوع الحساب'),
         centerTitle: true,
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            const SizedBox(height: 40),
-            Hero(
-              tag: 'app_logo',
-              child: Image.asset(
-                'assets/images/logo.png',
-                height: 300,
-              ),
-            ),
-            const SizedBox(height: 40),
-            Expanded(
+      body: LayoutBuilder(
+        builder: (context, constraints) {
+          // حساب الارتفاع المناسب للشعار
+          double logoHeight =
+              constraints.maxHeight * 0.25; // 25% من ارتفاع الشاشة
+
+          return SingleChildScrollView(
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
               child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
+                  SizedBox(
+                      height: constraints.maxHeight * 0.02), // 2% من الارتفاع
+                  Hero(
+                    tag: 'app_logo',
+                    child: Image.asset(
+                      'assets/images/logo.png',
+                      height: logoHeight,
+                    ),
+                  ),
+                  SizedBox(height: constraints.maxHeight * 0.03),
+                  // بطاقات اختيار نوع المستخدم
                   _buildTypeCard(
                     context,
                     'باحث عن عمل',
@@ -36,7 +41,7 @@ class UserTypeScreen extends StatelessWidget {
                     Colors.blue,
                     () => _navigateToAuth(context, 'jobseeker'),
                   ),
-                  const SizedBox(height: 16),
+                  const SizedBox(height: 12),
                   _buildTypeCard(
                     context,
                     'صاحب عمل',
@@ -44,7 +49,7 @@ class UserTypeScreen extends StatelessWidget {
                     Colors.green,
                     () => _navigateToAuth(context, 'employer'),
                   ),
-                  const SizedBox(height: 16),
+                  const SizedBox(height: 12),
                   _buildTypeCard(
                     context,
                     'مدير موارد بشرية',
@@ -52,7 +57,7 @@ class UserTypeScreen extends StatelessWidget {
                     Colors.orange,
                     () => _navigateToAuth(context, 'hr'),
                   ),
-                  const SizedBox(height: 16),
+                  const SizedBox(height: 12),
                   _buildTypeCard(
                     context,
                     'الأعمال اليومية',
@@ -60,11 +65,12 @@ class UserTypeScreen extends StatelessWidget {
                     Colors.purple,
                     () => _navigateToAuth(context, 'daily'),
                   ),
+                  SizedBox(height: constraints.maxHeight * 0.02),
                 ],
               ),
             ),
-          ],
-        ),
+          );
+        },
       ),
     );
   }
@@ -76,17 +82,18 @@ class UserTypeScreen extends StatelessWidget {
       child: InkWell(
         onTap: onTap,
         child: Padding(
-          padding: const EdgeInsets.all(16.0),
+          padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
           child: Row(
             children: [
-              Icon(icon, size: 40, color: color),
+              Icon(icon, size: 32, color: color),
               const SizedBox(width: 16),
-              Text(
-                title,
-                style: const TextStyle(fontSize: 18),
+              Expanded(
+                child: Text(
+                  title,
+                  style: const TextStyle(fontSize: 16),
+                ),
               ),
-              const Spacer(),
-              const Icon(Icons.arrow_forward_ios),
+              const Icon(Icons.arrow_forward_ios, size: 16),
             ],
           ),
         ),

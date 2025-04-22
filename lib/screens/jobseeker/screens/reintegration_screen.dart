@@ -5,19 +5,23 @@ class ReintegrationScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: Column(
-        children: [
-          _buildWelcomeCard(),
-          const SizedBox(height: 16),
-          _buildTrainingSection(),
-          const SizedBox(height: 16),
-          Expanded(
-            child: _buildOpportunitiesList(),
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        return SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              children: [
+                _buildWelcomeCard(),
+                const SizedBox(height: 16),
+                _buildTrainingSection(context),
+                const SizedBox(height: 16),
+                _buildOpportunitiesListView(),
+              ],
+            ),
           ),
-        ],
-      ),
+        );
+      },
     );
   }
 
@@ -71,53 +75,76 @@ class ReintegrationScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildTrainingSection() {
-    return Container(
-      height: 150,
-      child: ListView.builder(
-        scrollDirection: Axis.horizontal,
-        itemCount: 5,
-        itemBuilder: (context, index) {
-          return Card(
-            margin: const EdgeInsets.only(right: 16),
-            child: Container(
-              width: 250,
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
+  Widget _buildTrainingSection(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final screenHeight = MediaQuery.of(context).size.height;
+
+    return SizedBox(
+      height: screenHeight * 0.25,
+      child: ScrollConfiguration(
+        behavior: ScrollConfiguration.of(context).copyWith(overscroll: false),
+        child: ListView.builder(
+          scrollDirection: Axis.horizontal,
+          itemCount: 5,
+          itemBuilder: (context, index) {
+            return Container(
+              width: screenWidth * 0.8,
+              margin: const EdgeInsets.only(right: 8),
+              child: Card(
+                child: Padding(
+                  padding: const EdgeInsets.all(12),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Icon(
-                        Icons.school,
-                        color: Colors.purple[300],
+                      Row(
+                        children: [
+                          Icon(Icons.school,
+                              color: Colors.purple[300], size: 24),
+                          const SizedBox(width: 8),
+                          Expanded(
+                            child: Text(
+                              'دورة تدريبية ${index + 1}',
+                              style: const TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 16,
+                              ),
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                        ],
                       ),
-                      const SizedBox(width: 8),
-                      const Text(
-                        'دورة تدريبية',
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text('المدة: 3 أشهر'),
+                          Text(
+                              'تاريخ البدء: ${DateTime.now().add(Duration(days: 7 * (index + 1))).toString().substring(0, 10)}'),
+                        ],
+                      ),
+                      SizedBox(
+                        width: double.infinity,
+                        child: ElevatedButton(
+                          onPressed: () {},
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.purple,
+                            padding: const EdgeInsets.symmetric(vertical: 12),
+                          ),
+                          child: const Text('سجل الآن'),
                         ),
                       ),
                     ],
                   ),
-                  const SizedBox(height: 8),
-                  Text('الدورة ${index + 1}'),
-                  const Text('المدة: 3 أشهر'),
-                  ElevatedButton(
-                    onPressed: () {},
-                    child: const Text('سجل الآن'),
-                  ),
-                ],
+                ),
               ),
-            ),
-          );
-        },
+            );
+          },
+        ),
       ),
     );
   }
 
-  Widget _buildOpportunitiesList() {
+  Widget _buildOpportunitiesListView() {
     final opportunities = [
       {
         'title': 'فرصة عمل في الصيانة',
@@ -137,6 +164,8 @@ class ReintegrationScreen extends StatelessWidget {
     ];
 
     return ListView.builder(
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
       itemCount: opportunities.length,
       itemBuilder: (context, index) {
         final opportunity = opportunities[index];
